@@ -626,12 +626,13 @@ void resetPalette(const uint8_t colours[]) {
 // Parameters:
 // - colours: Number of colours per pixel (2, 4, 8, 16 or 64)
 // - modeLine: A modeline string (see the FagGL documentation for more details)
+// - doubleBuffered: Optional boolean specifying whether double buffered mode is required
 // Returns:
 // - 0: Successful
 // - 1: Invalid # of colours
 // - 2: Not enough memory for mode
 //
-int change_resolution(int colours, char * modeLine) {
+int change_resolution(int colours, char * modeLine, const bool doubleBuffered = false) {
 	fabgl::VGABaseController * controller = get_VGAController(colours);
 
 	if(controller == nullptr) {						// If controller is null, then an invalid # of colours was passed
@@ -648,7 +649,7 @@ int change_resolution(int colours, char * modeLine) {
 		VGAController->begin();						// And spin it up
 	}
 	if(modeLine) {									// If modeLine is not a null pointer then
-		VGAController->setResolution(modeLine);		// Set the resolution
+		VGAController->setResolution(modeLine, -1, -1, doubleBuffered);		// Set the resolution
 	}
 	VGAController->enableBackgroundPrimitiveExecution(true);
 	VGAController->enableBackgroundPrimitiveTimeout(false);
