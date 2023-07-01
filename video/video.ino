@@ -98,8 +98,8 @@ int         	count = 0;						// Generic counter, incremented every iteration of 
 uint8_t			numsprites = 0;					// Number of sprites on stage
 uint8_t 		current_sprite = 0; 			// Current sprite number
 uint8_t 		current_bitmap = 0;				// Current bitmap number
-Bitmap			bitmaps[MAX_BITMAPS];			// Bitmap object storage
-Sprite			sprites[MAX_SPRITES];			// Sprite object storage
+Bitmap			*bitmaps;			// Bitmap object storage
+Sprite			*sprites;			// Sprite object storage
 byte 			keycode = 0;					// Last pressed key code
 byte 			modifiers = 0;					// Last pressed key modifiers
 bool			terminalMode = false;			// Terminal mode
@@ -137,6 +137,21 @@ void setup() {
 	pinMode(UART_CTS, INPUT);	
 	setRTSStatus(true);
 	#endif
+
+	sprites = (fabgl::Sprite *)heap_caps_calloc(MAX_SPRITES, sizeof(Sprite), MALLOC_CAP_SPIRAM);
+	if (sprites == NULL) {
+		debug_log("Failed to allocate memory for sprites\r\n");
+	}
+	for (int i = 0; i < MAX_SPRITES; ++i)
+		new(&sprites[i]) Sprite();
+  
+	bitmaps = (fabgl::Bitmap  *)heap_caps_calloc(MAX_SPRITES, sizeof(Bitmap), MALLOC_CAP_SPIRAM);
+	if (bitmaps == NULL) {
+		debug_log("Failed to allocate memory for bitmaps\r\n");
+	}
+	for (int i = 0; i < MAX_BITMAPS; ++i)
+		new(&bitmaps[i]) Bitmap();
+
 	wait_eZ80();
  	PS2Controller.begin(PS2Preset::KeyboardPort0, KbdMode::CreateVirtualKeysQueue);
 	PS2Controller.keyboard()->setLayout(&fabgl::UKLayout);
