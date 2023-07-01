@@ -1411,8 +1411,20 @@ void vdu_sys() {
 			case 0x07: {					// VDU 23, 7
 				vdu_sys_scroll();			// Scroll 
 			}	break;
+			case 0x0C: {					// VDU 23, 12
+				Canvas->clear();			// Clear canvas (not full CLS)
+				break;
+			}
 			case 0x10: {					// VDU 23, 16
 				vdu_sys_cursorBehaviour();	// Set cursor behaviour
+				break;
+			}
+			case 0x14: {					// VDU 23, 20
+				VGAController->refreshSprites();	// Refresh sprites
+				break;
+			}
+			case 0x15: {					// VDU 23, 21
+				Canvas->swapBuffers();			// Swap to next buffer
 				break;
 			}
 			case 0x1B: {					// VDU 23, 27
