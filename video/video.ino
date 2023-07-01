@@ -1689,7 +1689,7 @@ void vdu_sys_sprites(void) {
 			//
         	// Allocate new heap data
 			//
-        	dataptr = (void *)heap_caps_malloc(sizeof(uint32_t)*width*height, MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL);
+		dataptr = (void *)heap_caps_malloc(sizeof(uint32_t)*width*height, MALLOC_CAP_SPIRAM);
         	bitmaps[current_bitmap].data = (uint8_t *)dataptr;
 
         	if(dataptr != NULL) {                  
