@@ -663,6 +663,19 @@ int change_resolution(int colours, char * modeLine) {
 	return 0;										// Return with no errors
 }
 
+struct mode_defn {
+  int mode;
+  int colours;
+  char *modeline;
+};
+
+static const mode_defn modelist[] = {
+  {  0,        2, SVGA_1024x768_60Hz, },
+  {  1,       16, VGA_512x384_60Hz,   },
+  {  2,       64, QVGA_320x240_60Hz,  },
+  {  3,       16, VGA_640x480_60Hz,   },
+};
+
 // Do the mode change
 // Parameters:
 // - mode: The video mode
@@ -674,27 +687,29 @@ int change_resolution(int colours, char * modeLine) {
 //
 int change_mode(int mode) {
 	int errVal = -1;
+	bool found = false;
 
+	// Lookup the mode in the table
+	int mode_idx = 0;
+	for (; mode_idx < (sizeof(modelist) / sizeof(modelist[0])); ++mode_idx)
+		if (modelist[mode_idx].mode == mode) {
+			found = true;
+			break;
+		}
+	if (!found) {
+		debug_log("Mode %d not found\r\n", mode);
+		return -1;
+	}
+
+	// Attempt to set the chosen resolution
 	cls(true);
 	if(mode != videoMode) {
-		switch(mode) {
-			case 0:
-				errVal = change_resolution(2, SVGA_1024x768_60Hz);
-				break;
-			case 1:
-				errVal = change_resolution(16, VGA_512x384_60Hz);
-				break;
-			case 2:
-				errVal = change_resolution(64, QVGA_320x240_60Hz);
-				break;
-			case 3:
-				errVal = change_resolution(16, VGA_640x480_60Hz);
-				break;
-		}
-		if(errVal != 0) {
+		errVal = change_resolution(modelist[mode_idx].colours, modelist[mode_idx].modeline);
+		if (errVal != 0)
 			return errVal;
-		}
 	}
+
+	// Reset everything else
 	switch(VGAColourDepth) {
 		case  2: resetPalette(defaultPalette02); break;
 		case  4: resetPalette(defaultPalette04); break;
