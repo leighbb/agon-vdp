@@ -44,6 +44,11 @@
 #include "HardwareSerial.h"
 #include "ESP32Time.h"
 
+#define VGA_640x350_70Hz "\"640x350@70Hz\" 25.175  640 656 752 800 350 387 389 449 -HSync -VSync"
+#define VGA_720x400_70Hz "\"720x400@70Hz\" 28.32   720 738 846 900 400 412 414 449 -hsync +vsync"
+#define VGA_416x312_75Hz "\"416x312@75Hz\" 28.64   416 432 464 576 312 312 314 333 -HSync -VSync DoubleScan"
+#define VGA_832x624_75Hz "\"832x624@75Hz\" 57.28   832 864 928 1152 624 625 628 667 -HSync -VSync"
+
 #define VERSION			1
 #define REVISION		4
 #define RC				1
@@ -692,6 +697,21 @@ static const mode_defn modelist[] = {
   {  1,       16, VGA_512x384_60Hz,   },
   {  2,       64, QVGA_320x240_60Hz,  },
   {  3,       16, VGA_640x480_60Hz,   },
+  {  4,       64, VGA_400x300_60Hz,   },
+  {  5,       64, VGA_416x312_75Hz,   },
+  {  6,       16, VGA_640x350_70Hz,   },
+  {  8,       16, VGA_720x400_70Hz,   },
+  {  9,        4, SVGA_800x600_60Hz,  },
+  { 10,        4, VGA_832x624_75Hz,   },
+  { 128 +  1,  4, VGA_512x384_60Hz,   },
+  { 128 +  2, 64, QVGA_320x240_60Hz,  },
+  { 128 +  3,  4, VGA_640x480_60Hz,   },
+  { 128 +  4, 16, VGA_400x300_60Hz,   },
+  { 128 +  5, 16, VGA_416x312_75Hz,   },
+  { 128 +  6,  4, VGA_640x350_70Hz,   },
+  { 128 +  8,  4, VGA_720x400_70Hz,   },
+  { 128 +  9,  2, SVGA_800x600_60Hz,  },
+  { 128 + 10,  2, VGA_832x624_75Hz,   },
 };
 
 // Do the mode change
@@ -722,7 +742,7 @@ int change_mode(int mode) {
 	// Attempt to set the chosen resolution
 	cls(true);
 	if(mode != videoMode) {
-		errVal = change_resolution(modelist[mode_idx].colours, modelist[mode_idx].modeline);
+		errVal = change_resolution(modelist[mode_idx].colours, modelist[mode_idx].modeline, mode >= 128);
 		if (errVal != 0)
 			return errVal;
 	}
