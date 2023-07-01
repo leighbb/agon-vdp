@@ -1851,5 +1851,47 @@ void vdu_sys_sprites(void) {
 			doWaitCompletion = true;
 			debug_log("vdu_sys_sprites: reset\n\r");
 		}	break;
-    }
+		case 129: {  // Send bitmap data
+			int rw = readWord_t();
+			if (rw == -1)
+				return;
+
+			int rh = readWord_t();
+			if (rh == -1)
+				return;
+
+			width = rw;
+			height = rh;
+
+			//
+			// Clear out any old data first
+			//
+			free(bitmaps[current_bitmap].data);
+
+			//
+			// Allocate new heap data
+			//
+			char *rgb2222data = (char *)heap_caps_malloc(width * height, MALLOC_CAP_SPIRAM);
+			if (rgb2222data != NULL) {
+				//
+				// Read data to the new databuffer
+				//
+				for (n = 0; n < width * height; n++)
+					rgb2222data[n] = readByte_t();
+
+				debug_log("vdu_sys_sprites: bitmap %d - data received - width %d, height %d\n\r", current_bitmap, width, height);
+			} else {
+				for (n = 0; n < width * height; n++)
+					readByte_t();  // discard incoming data
+					debug_log("vdu_sys_sprites: bitmap %d - data discarded, no memory available - width %d, height %d\n\r", current_bitmap, width, height);
+			}
+
+			//
+			// Create bitmap structure
+			//
+			bitmaps[current_bitmap] = Bitmap(width, height, rgb2222data, PixelFormat::RGBA2222);
+			bitmaps[current_bitmap].dataAllocated = false;
+		}
+		break;
+	}
 }
