@@ -299,8 +299,10 @@ void init_audio() {
 	}
 }
 void init_audio_channel(int channel) {
+	static const uint32_t AUDIO_TASK_STACK_SIZE = 2048;
+
   	xTaskCreatePinnedToCore(audio_driver,  "audio_driver",
-    	4096,					// This stack size can be checked & adjusted by reading the Stack Highwater
+    	AUDIO_TASK_STACK_SIZE,				// This stack size can be checked & adjusted by reading the Stack Highwater
         &channel,				// Parameters
         PLAY_SOUND_PRIORITY,	// Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
         NULL,
