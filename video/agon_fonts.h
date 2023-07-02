@@ -13,7 +13,7 @@
 
 namespace fabgl {
 
-	uint8_t FONT_AGON_DATA[256*8]; 
+	uint8_t *FONT_AGON_DATA; 
 
 	static const uint8_t FONT_AGON_BITMAP[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //  
@@ -255,7 +255,7 @@ namespace fabgl {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //		
 	};
 
-	extern const FontInfo FONT_AGON = {
+	static FontInfo FONT_AGON = {
 		.pointSize = 6,
 		.width     = 8,
 		.height    = 8,
@@ -265,7 +265,7 @@ namespace fabgl {
 		.flags     = 0,
 		.weight    = 400,
 		.charset   = 255,
-		.data      = FONT_AGON_DATA,
+		.data      = nullptr,
 		.chptr     = nullptr,
 		.codepage  = 1252,
 	};

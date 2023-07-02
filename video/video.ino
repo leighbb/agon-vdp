@@ -287,7 +287,14 @@ uint32_t readLong_b() {
 // Copy the AGON font data from Flash to RAM
 //
 void copy_font() {
-	memcpy(fabgl::FONT_AGON_DATA + 256, fabgl::FONT_AGON_BITMAP, sizeof(fabgl::FONT_AGON_BITMAP));
+  fabgl::FONT_AGON_DATA = (uint8_t *)heap_caps_calloc(256, 8, MALLOC_CAP_SPIRAM);
+  if (fabgl::FONT_AGON_DATA == NULL) {
+    debug_log("Failed to allocate memory for FONT_AGON_DATA\r\n");
+    return;
+  }
+
+  memcpy(fabgl::FONT_AGON_DATA + 256, fabgl::FONT_AGON_BITMAP, sizeof(fabgl::FONT_AGON_BITMAP));
+  fabgl::FONT_AGON.data      = fabgl::FONT_AGON_DATA;
 }
 
 // Set the RTS line value
