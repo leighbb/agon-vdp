@@ -747,7 +747,6 @@ int change_mode(int mode) {
 	}
 
 	// Attempt to set the chosen resolution
-	cls(true);
 	if(mode != videoMode) {
 		errVal = change_resolution(modelist[mode_idx].colours, modelist[mode_idx].modeline, mode >= 128);
 		if (errVal != 0)
@@ -784,7 +783,7 @@ int change_mode(int mode) {
 	cursorEnabled = true;
 	cursorBehaviour = 0;
 	activeCursor = &textCursor;
-	vdu_resetViewports();
+	cls(true);
 	sendModeInformation();
 	debug_log("do_modeChange: canvas(%d,%d), scale(%f,%f)\n\r", canvasW, canvasH, logicalScaleX, logicalScaleY);
 	return 0;
@@ -1241,7 +1240,7 @@ void vdu_graphicsViewport() {
 //
 void vdu_resetViewports() {
 	defaultViewport = Rect(0, 0, canvasW - 1, canvasH - 1);
-	textViewport =	Rect(0, 0, canvasW - 1, canvasH - 1);
+	textViewport =	Rect(0, 0, canvasW - 1 - canvasW % fontW, canvasH - 1 - canvasH % fontH);
 	graphicsViewport = Rect(0, 0, canvasW - 1, canvasH - 1);
 	activeViewport = &textViewport;
 	useViewports = false;
@@ -1257,8 +1256,8 @@ void vdu_textViewport() {
 	int x2 = (readByte_t() + 1) * fontW - 1;	// Right
 	int y1 = readByte_t() * fontH;				// Top
 
-	if(x2 >= canvasW) x2 = canvasW - 1;
-	if(y2 >= canvasH) y2 = canvasH - 1;
+	if(x2 >= canvasW - canvasW % fontW) x2 = canvasW - 1 - canvasW % fontW;
+	if(y2 >= canvasH - canvasH % fontH) y2 = canvasH - 1 - canvasH % fontH;
 
 	if(x1 >= 0 && y1 >= 0 && x2 > x1 && y2 > y1) {
 		textViewport = Rect(x1, y1, x2, y2);
